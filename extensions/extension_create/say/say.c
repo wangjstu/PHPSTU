@@ -388,6 +388,47 @@ PHP_FUNCTION(show_ini)
     RETURN_ZVAL(&arr, 0, 1);
 }
 
+
+/**
+call_user_function_ex方法用于调用函数和方法。参数说明如下：
+第一个参数：方法表。通常情况下，写 EG(function_table) 更多信息点击查看 http://www.bo56.com/php7%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bcg%E5%92%8Ceg/
+第二个参数：对象。如果不是调用对象的方法，而是调用函数，填写NULL
+第三个参数：方法名。
+第四个参数：返回值。
+第五个参数：参数个数。
+第六个参数：参数值。是一个zval数组。
+第七个参数：参数是否进行分离操作。详细的，可以看下鸟哥的这篇文章。点击查看:http://www.laruence.com/2008/09/19/520.html
+第八个参数：符号表。一般情况写设置为NULL即可。
+*/
+PHP_FUNCTION(call_function)
+{
+    zval *obj = NULL;
+    zval *fun = NULL;
+    zval *param = NULL;
+    zval retval;
+    zval args[1];
+
+#ifndef FAST_ZPP
+      if (zend_parse_parameters(ZEND_NUM_ARGS(), "zzz", &obj, &fun, &param) == FAILURE) {
+          return;
+      }
+#else
+      ZEND_PARSE_PARAMETERS_START(3, 3)
+          Z_PARAM_ZVAL(obj)
+          Z_PARAM_ZVAL(fun)
+          Z_PARAM_ZVAL(param)
+      ZEND_PARSE_PARAMETERS_END();
+#endif
+
+      args[0] = *param;
+      if (obj == NULL || Z_TYPE_P(obj) == IS_NULL) {
+          call_user_function_ex(EG(function_table), NULL, fun, &retval, 1, args, 0, NULL);
+      } else {
+          call_user_function_ex(EG(function_table), obj, fun, &retval, 1, args, 0, NULL);
+      }
+      RETURN_ZVAL(&retval, 0, 1);
+}
+
 /* {{{ php_say_init_globals
  */
 /* Uncomment this function if you have INI entries
@@ -502,6 +543,7 @@ const zend_function_entry say_functions[] = {
   PHP_FE(array_concat, NULL) /*array_concat*/
   PHP_FE(define_var, NULL) /*define_var*/
   PHP_FE(show_ini, NULL) /*show_ini*/
+  PHP_FE(call_function, NULL) /*call_function*/
 	PHP_FE_END	/* Must be the last line in say_functions[] */
 };
 /* }}} */

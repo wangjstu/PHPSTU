@@ -1,4 +1,8 @@
 <?php
+/**
+* php extension in php7
+*/
+
 $br = (php_sapi_name() == "cli")? "":"<br>";
 
 if(!extension_loaded('say')) {
@@ -84,4 +88,31 @@ echo '============================show_ini'.PHP_EOL;
 //show_ini
 $ini = show_ini();
 var_dump($ini);
+
+
+
+
+echo '============================call_function'.PHP_EOL;
+//call_function
+class democall {
+    public function get_site_name ($prefix) {
+        return $prefix."信海龙的博客\n";
+    }
+}
+function get_site_url ($prefix) {
+    return $prefix."www.bo56.com\n";
+}
+
+/*//扩展实现
+function call_function ($obj, $fun, $param) {
+    if ($obj == null) {
+        $result = $fun($param);
+    } else {
+        $result = $obj->$fun($param);
+    }
+    return $result;
+}*/
+$demo = new democall();
+echo call_function($demo, "get_site_name", "site name:");
+echo call_function(null, "get_site_url", "site url:");
 ?>
