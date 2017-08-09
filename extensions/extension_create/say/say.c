@@ -26,6 +26,7 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "php_say.h"
+#include "ext/standard/php_filestat.h"
 
 /* If you declare any globals in php_say.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(say)
@@ -429,6 +430,84 @@ PHP_FUNCTION(call_function)
       RETURN_ZVAL(&retval, 0, 1);
 }
 
+
+/**
+php_stat函数是PHP中is_dir函数在实现的时候，使用的一个函数。具体代码参见ext/standard/filestat.c文件的FileFunction宏方法。
+在1092行附近。这个函数是判断一个路径的状态。如，是否是文件夹等。一般在扩展实现的时候，不建议使用。这里只是为了演示，才使用的。
+zend_stat宏方法。也是实现判断一个路径的状态。推荐在扩展中使用。如果调用有问题，会返回-1。
+PHP把一些IO操作都封装成了流操作。这些流操作都声明在main/php_streams.h文件中。下面我们说下，我们用到的流操作函数。
+*/
+
+
+
+void list_dir(const char *dir);
+
+PHP_FUNCTION(list_dir)
+{
+    char *dir;
+    size_t dir_len;
+
+#ifdef FAST_ZPP
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &dir, &dir_len) == FAILURE) {
+        return;
+    }
+#else
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+    Z_PARAM_PATH(dir, dir_len)
+    ZEND_PARSE_PARAMETERS_END();
+#endif
+
+    php_stat(dir, (php_stat_len) dir_len, FS_IS_DIR, return_value);
+
+    if (Z_TYPE_P(return_value) == IS_FALSE) {
+        RETURN_NULL();
+    }
+
+    list_dir(dir);
+
+    RETURN_NULL();
+}
+
+void list_dir(const char *dir)
+{
+    php_stream *stream;
+    int options = REPORT_ERRORS;
+    php_stream_dirent entry;
+    int path_len;
+    char path[MAXPATHLEN];
+    zend_stat_t st;
+
+    /**
+    php_stream_opendir函数是用于打开一个目录。
+    第一个参数：路径
+    第二个参数：选项。控制一些函数调用行为。定义在main/php_streams.h中。
+    多个选项可以使用异或操作。如 int options = IGNORE_PATH | REPORT_ERRORS;
+    */
+    stream = php_stream_opendir(dir, options, NULL);
+    if (!stream) {
+        return;
+    }
+
+    /**
+    php_stream_readdir读取目录流。
+    第一个参数：上面函数打开的stream流
+    第二个参数：php_stream_dirent 用于存储当前读取的信息。
+    */
+    while(php_stream_readdir(stream, &entry)) {
+        if ((path_len = snprintf(path, sizeof(path), "%s/%s", dir, entry.d_name)) < 0) {
+            break;
+        }
+        if (zend_stat(path, &st) != -1 && S_ISDIR(st.st_mode) && strcmp(entry.d_name, ".") != 0 && strcmp(entry.d_name, "..") != 0) {
+            list_dir(path);
+        } else if (strcmp(entry.d_name, ".") != 0 && strcmp(entry.d_name, "..") != 0) {
+            PUTS(path);
+            PUTS("\n");
+        }
+    }
+    /*php_stream_closedir关闭目录流。参数是之前打开的流。*/
+    php_stream_closedir(stream);
+}
+
 /* {{{ php_say_init_globals
  */
 /* Uncomment this function if you have INI entries
@@ -544,6 +623,7 @@ const zend_function_entry say_functions[] = {
   PHP_FE(define_var, NULL) /*define_var*/
   PHP_FE(show_ini, NULL) /*show_ini*/
   PHP_FE(call_function, NULL) /*call_function*/
+  PHP_FE(list_dir, NULL) /*list_dir*/
 	PHP_FE_END	/* Must be the last line in say_functions[] */
 };
 /* }}} */

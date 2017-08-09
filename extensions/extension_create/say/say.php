@@ -96,14 +96,14 @@ echo '============================call_function'.PHP_EOL;
 //call_function
 class democall {
     public function get_site_name ($prefix) {
-        return $prefix."信海龙的博客\n";
+        return $prefix."淇℃捣榫欑殑鍗氬\n";
     }
 }
 function get_site_url ($prefix) {
     return $prefix."www.bo56.com\n";
 }
 
-/*//扩展实现
+/*//鎵╁睍瀹炵幇
 function call_function ($obj, $fun, $param) {
     if ($obj == null) {
         $result = $fun($param);
@@ -115,4 +115,30 @@ function call_function ($obj, $fun, $param) {
 $demo = new democall();
 echo call_function($demo, "get_site_name", "site name:");
 echo call_function(null, "get_site_url", "site url:");
+
+
+
+
+echo '============================list_dir'.PHP_EOL;
+//call_function
+/*function list_dir($dir) {
+    if (is_dir($dir) === false) {
+        return;
+    }   
+
+    $dh = opendir($dir);
+    if ($dh == false) {
+        return;
+    }   
+
+    while (($file = readdir($dh)) !== false) {
+        if(is_dir($dir."/".$file) && $file != "." && $file != "..") {
+            list_dir($dir."/".$file);
+        } elseif ($file != "." && $file != "..") {
+            echo $dir."/".$file."\n";
+        }   
+    }   
+    closedir($dh);
+}*/
+list_dir("/vagrant/extension/source/say");
 ?>
