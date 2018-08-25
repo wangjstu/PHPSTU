@@ -328,8 +328,6 @@ Hello TestSubClass
 > *  PSR-6 缓存接口规范
 > *  PSR-7 HTTP 消息接口规范
 
-PSR-7 HTTP 消息接口规范
-
 #### psr-0 方式
 ```JSON
 {
