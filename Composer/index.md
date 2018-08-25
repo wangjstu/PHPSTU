@@ -320,13 +320,13 @@ Hello TestSubClass
 
 ### PSR规范
 
-> PSR-0 (Autoloading Standard) 自动加载标准
-> PSR-1 (Basic Coding Standard) 基础编码标准
-> PSR-2 (Coding Style Guide) 编码风格向导
-> PSR-3 (Logger Interface) 日志接口
-> PSR-4 (Improved Autoloading) 自动加载优化标准
-> PSR-6 缓存接口规范
-> PSR-7 HTTP 消息接口规范
+> * PSR-0 (Autoloading Standard) 自动加载标准
+> *  PSR-1 (Basic Coding Standard) 基础编码标准
+> *  PSR-2 (Coding Style Guide) 编码风格向导
+> *  PSR-3 (Logger Interface) 日志接口
+> *  PSR-4 (Improved Autoloading) 自动加载优化标准
+> *  PSR-6 缓存接口规范
+> *  PSR-7 HTTP 消息接口规范
 
 PSR-7 HTTP 消息接口规范
 
@@ -343,7 +343,7 @@ PSR-7 HTTP 消息接口规范
 > 这个配置也以 Map 的形式写入生成的 vendor/composer/autoload_namespaces.php 文件之中。
 
 #### psr-4 方式
-> 1）一个完整的类名需具有以下结构：
+__1）一个完整的类名需具有以下结构：__
 > \\<命名空间>\\<子命名空间>\\<类名>
 
 > 完整的类名必须要有一个顶级命名空间，被称为 "vendor namespace"；
@@ -353,12 +353,13 @@ PSR-7 HTTP 消息接口规范
 > 完整的类名可以由任意大小写字母组成；
 > 所有类名都必须是大小写敏感的。
 
-> 2）根据完整的类名载入相应的文件
+__2）根据完整的类名载入相应的文件__
 > 完整的类名中，去掉最前面的命名空间分隔符，前面连续的一个或多个命名空间和子命名空间，作为「命名空间前缀」，其必须与至少一个「文件基目录」相对应；
 > 紧接命名空间前缀后的子命名空间 必须 与相应的「文件基目录」相匹配，其中的命名空间分隔符将作为目录分隔符。
 > 末尾的类名必须与对应的以 .php 为后缀的文件同名。
 > 自动加载器（autoloader）的实现一定不可抛出异常、一定不可触发任一级别的错误信息以及不应该有返回值。
-> 3) 例子
+
+__3) 例子__
 > PSR-4风格
 ```CODE
 类名：ZendAbc 
@@ -686,8 +687,8 @@ drwxr-xr-x 1 wangjstu 197121   0 八月 12 21:31 guzzlehttp/
     "extra": { "key": "value" },
     "bin": ["./bin/toto"]
 }
-- 解析参考《composer json》与《phpcomposer官网》
 ```
+- 解析参考《composer json》与《phpcomposer官网》
 
 #### composer 命令
 ```SHELL
