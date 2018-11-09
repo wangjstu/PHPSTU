@@ -312,7 +312,10 @@ Hello TestSubClass
   - spl_autoload_register注册的加载函数可以按需被spl_autoload_unregister掉
 - 劣势：
   - 还需要配置很多加载方法
-
+  - \_\_autoload会在 spl_autoload_register 后会失效，因为 autoload_func 函数指针已指向 spl_autoload 方法，可以通过下面的方法来把 \_\_autoload 方法加入 autoload_functions list 
+```PHPCODE
+spl_autoload_register( '__autoload' ); 
+```
 
 ## 现代代码加载
 
